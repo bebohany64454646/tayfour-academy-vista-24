@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import AccountTypeSelection from "@/components/AccountTypeSelection";
@@ -16,12 +17,28 @@ type AppState =
   | 'student-dashboard'
   | 'admin-dashboard';
 
+interface StudentData {
+  id?: number;
+  username: string;
+  full_name: string;
+  student_number?: string;
+  grade?: string;
+  class_section?: string;
+  phone?: string;
+  parent_phone?: string;
+  email?: string;
+  address?: string;
+  birth_date?: string;
+  enrollment_date?: string;
+}
+
 const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>('welcome');
   const [accountType, setAccountType] = useState<'student' | 'admin'>('student');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [currentStudentData, setCurrentStudentData] = useState<StudentData | null>(null);
 
   useEffect(() => {
     // منع التحقق المتكرر
@@ -42,6 +59,7 @@ const Index = () => {
             const user = await getUserByRememberToken(studentToken);
             if (user && user.type === 'student') {
               console.log('تم تسجيل دخول الطالب تلقائياً');
+              setCurrentStudentData(user);
               setAccountType('student');
               setCurrentState('student-dashboard');
               setHasInitialized(true);
@@ -109,6 +127,7 @@ const Index = () => {
     console.log('Login attempt:', credentials);
     
     if (credentials.type === 'student') {
+      setCurrentStudentData(credentials.userData);
       handleStateChange('student-dashboard');
     } else {
       handleStateChange('admin-dashboard');
@@ -117,6 +136,7 @@ const Index = () => {
 
   const handleRegister = (data: any) => {
     console.log('Registration data:', data);
+    setCurrentStudentData(data);
     handleStateChange('student-dashboard');
   };
 
@@ -124,6 +144,7 @@ const Index = () => {
     console.log('تسجيل الخروج...');
     localStorage.removeItem('remember_token_student');
     localStorage.removeItem('remember_token_admin');
+    setCurrentStudentData(null);
     setHasInitialized(false);
     setIsCheckingAuth(false);
     setCurrentState('welcome');
@@ -219,6 +240,10 @@ const Index = () => {
           <div {...screenProps}>
             <StudentDashboard 
               onLogout={handleLogout}
+              studentData={currentStudentData || {
+                username: 'unknown',
+                full_name: 'مستخدم غير معروف'
+              }}
             />
           </div>
         );
