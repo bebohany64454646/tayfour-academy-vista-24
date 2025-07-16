@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import AccountTypeSelection from "@/components/AccountTypeSelection";
@@ -21,31 +20,35 @@ const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>('welcome');
   const [accountType, setAccountType] = useState<'student' | 'admin'>('student');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
-    // التأكد من عدم تكرار عملية التحقق
+    // منع التحقق المتكرر
     if (hasInitialized) return;
     
     const initializeApp = async () => {
       try {
         console.log('بدء تهيئة التطبيق...');
+        setIsCheckingAuth(true);
+        
         await initializeDatabase();
         
         // التحقق من وجود رمز تذكر محفوظ للطلاب
         const studentToken = localStorage.getItem('remember_token_student');
         if (studentToken) {
           console.log('تم العثور على رمز تذكر للطالب');
-          const user = await getUserByRememberToken(studentToken);
-          if (user && user.type === 'student') {
-            console.log('تم تسجيل دخول الطالب تلقائياً');
-            setAccountType('student');
-            setCurrentState('student-dashboard');
-            setIsCheckingAuth(false);
-            setHasInitialized(true);
-            return;
-          } else {
+          try {
+            const user = await getUserByRememberToken(studentToken);
+            if (user && user.type === 'student') {
+              console.log('تم تسجيل دخول الطالب تلقائياً');
+              setAccountType('student');
+              setCurrentState('student-dashboard');
+              setHasInitialized(true);
+              setIsCheckingAuth(false);
+              return;
+            }
+          } catch (error) {
             console.log('رمز التذكر للطالب غير صالح، سيتم حذفه');
             localStorage.removeItem('remember_token_student');
           }
@@ -55,15 +58,17 @@ const Index = () => {
         const adminToken = localStorage.getItem('remember_token_admin');
         if (adminToken) {
           console.log('تم العثور على رمز تذكر للمشرف');
-          const user = await getUserByRememberToken(adminToken);
-          if (user && user.type === 'admin') {
-            console.log('تم تسجيل دخول المشرف تلقائياً');
-            setAccountType('admin');
-            setCurrentState('admin-dashboard');
-            setIsCheckingAuth(false);
-            setHasInitialized(true);
-            return;
-          } else {
+          try {
+            const user = await getUserByRememberToken(adminToken);
+            if (user && user.type === 'admin') {
+              console.log('تم تسجيل دخول المشرف تلقائياً');
+              setAccountType('admin');
+              setCurrentState('admin-dashboard');
+              setHasInitialized(true);
+              setIsCheckingAuth(false);
+              return;
+            }
+          } catch (error) {
             console.log('رمز التذكر للمشرف غير صالح، سيتم حذفه');
             localStorage.removeItem('remember_token_admin');
           }
@@ -71,17 +76,17 @@ const Index = () => {
         
         // إذا لم يكن هناك مصادقة محفوظة، اعرض صفحة الترحيب
         console.log('لا يوجد مصادقة محفوظة، عرض صفحة الترحيب');
-        setIsCheckingAuth(false);
         setHasInitialized(true);
+        setIsCheckingAuth(false);
       } catch (error) {
         console.error('خطأ في تهيئة التطبيق:', error);
-        setIsCheckingAuth(false);
         setHasInitialized(true);
+        setIsCheckingAuth(false);
       }
     };
     
     initializeApp();
-  }, []); // إزالة hasInitialized من dependencies لتجنب الحلقة
+  }, [hasInitialized]);
 
   const handleStateChange = (newState: AppState) => {
     setIsTransitioning(true);
@@ -121,10 +126,10 @@ const Index = () => {
     localStorage.removeItem('remember_token_admin');
     setHasInitialized(false);
     setIsCheckingAuth(false);
-    handleStateChange('welcome');
+    setCurrentState('welcome');
   };
 
-  // عرض شاشة التحميل أثناء التحقق من المصادقة مرة واحدة فقط
+  // عرض شاشة التحميل فقط عند الحاجة
   if (isCheckingAuth && !hasInitialized) {
     return (
       <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center">

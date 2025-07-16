@@ -1,12 +1,12 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { FileText, Save, Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { FileText, Save, Plus, Search, Edit, Trash2, Eye, RefreshCw } from "lucide-react";
+import { getAllStudents } from "@/lib/database";
 
 interface Note {
   id: number;
@@ -14,6 +14,17 @@ interface Note {
   note: string;
   date: string;
   type: 'positive' | 'negative' | 'neutral';
+}
+
+interface Student {
+  id: number;
+  username: string;
+  student_number: string;
+  full_name: string;
+  grade: string;
+  class_section: string;
+  phone: string;
+  parent_phone: string;
 }
 
 const NotesManagement = () => {
@@ -24,10 +35,50 @@ const NotesManagement = () => {
   const [noteType, setNoteType] = useState<'positive' | 'negative' | 'neutral'>('neutral');
   const [searchTerm, setSearchTerm] = useState("");
   const [notes, setNotes] = useState<Note[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const grades = ["سابع", "ثامن", "تاسع"];
   const sections = ["1", "2", "3", "4", "5", "6", "7"];
-  const students: string[] = []; // Empty array - no students initially
+
+  // جلب بيانات الطلاب من قاعدة البيانات
+  const fetchStudents = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllStudents();
+      const formattedData: Student[] = data.map((row: any) => ({
+        id: row.id as number,
+        username: row.username as string,
+        student_number: row.student_number as string,
+        full_name: row.full_name as string,
+        grade: row.grade as string,
+        class_section: row.class_section as string,
+        phone: row.phone as string,
+        parent_phone: row.parent_phone as string,
+      }));
+      setStudents(formattedData);
+      console.log('تم جلب بيانات الطلاب:', formattedData.length);
+    } catch (error) {
+      console.error('خطأ في جلب الطلاب:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  // تصفية الطلاب حسب الصف والشعبة والبحث
+  const filteredStudents = students.filter(student => {
+    const matchesGrade = !selectedGrade || student.grade === selectedGrade;
+    const matchesSection = !selectedSection || student.class_section === selectedSection;
+    const matchesSearch = !searchTerm || 
+      student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.student_number.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesGrade && matchesSection && matchesSearch;
+  });
 
   const filteredNotes = notes.filter(note =>
     note.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,9 +92,15 @@ const NotesManagement = () => {
         return;
       }
 
+      const selectedStudentData = students.find(s => s.id.toString() === selectedStudent);
+      if (!selectedStudentData) {
+        console.warn('Selected student not found');
+        return;
+      }
+
       const note: Note = {
         id: Date.now(),
-        studentName: selectedStudent,
+        studentName: selectedStudentData.full_name,
         note: newNote.trim(),
         date: new Date().toISOString().split('T')[0],
         type: noteType
@@ -53,6 +110,7 @@ const NotesManagement = () => {
       setNewNote("");
       setSelectedStudent("");
       setNoteType('neutral');
+      console.log('تمت إضافة الملاحظة بنجاح');
     } catch (error) {
       console.error('Error adding note:', error);
     }
@@ -106,7 +164,7 @@ const NotesManagement = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
             <div className="space-y-2">
               <Label htmlFor="grade" className="font-cairo text-foreground">الصف</Label>
               <Select value={selectedGrade} onValueChange={setSelectedGrade}>
@@ -114,6 +172,7 @@ const NotesManagement = () => {
                   <SelectValue placeholder="اختر الصف" />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
+                  <SelectItem value="" className="font-cairo">جميع الصفوف</SelectItem>
                   {grades.map((grade) => (
                     <SelectItem key={grade} value={grade} className="font-cairo">
                       {grade}
@@ -130,6 +189,7 @@ const NotesManagement = () => {
                   <SelectValue placeholder="اختر الشعبة" />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
+                  <SelectItem value="" className="font-cairo">جميع الشعب</SelectItem>
                   {sections.map((section) => (
                     <SelectItem key={section} value={section} className="font-cairo">
                       الشعبة {section}
@@ -140,20 +200,55 @@ const NotesManagement = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="student" className="font-cairo text-foreground">الطالب</Label>
-              <Select value={selectedStudent} onValueChange={setSelectedStudent}>
-                <SelectTrigger className="enhanced-input">
-                  <SelectValue placeholder={students.length === 0 ? "لا يوجد طلاب - أضف الطلاب أولاً" : "اختر الطالب"} />
-                </SelectTrigger>
-                <SelectContent className="glass-effect">
-                  {students.map((student) => (
-                    <SelectItem key={student} value={student} className="font-cairo">
-                      {student}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="search" className="font-cairo text-foreground">البحث عن طالب</Label>
+              <div className="relative">
+                <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="ابحث بالاسم أو رقم الطالب..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="enhanced-input pr-10 font-cairo"
+                />
+              </div>
             </div>
+
+            <div className="space-y-2">
+              <Label className="font-cairo text-foreground">تحديث البيانات</Label>
+              <Button 
+                onClick={fetchStudents} 
+                variant="outline" 
+                className="w-full font-cairo"
+                disabled={loading}
+              >
+                <RefreshCw className={`h-4 w-4 ml-2 ${loading ? 'animate-spin' : ''}`} />
+                {loading ? 'جاري التحديث...' : 'تحديث قائمة الطلاب'}
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="student" className="font-cairo text-foreground">الطالب</Label>
+            <Select value={selectedStudent} onValueChange={setSelectedStudent}>
+              <SelectTrigger className="enhanced-input">
+                <SelectValue placeholder={
+                  loading ? "جاري تحميل الطلاب..." :
+                  filteredStudents.length === 0 ? "لا يوجد طلاب - تأكد من إضافة الطلاب أولاً" : 
+                  "اختر الطالب"
+                } />
+              </SelectTrigger>
+              <SelectContent className="glass-effect max-h-60">
+                {filteredStudents.map((student) => (
+                  <SelectItem key={student.id} value={student.id.toString()} className="font-cairo">
+                    {student.full_name} - {student.grade} / {student.class_section} - رقم: {student.student_number}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {filteredStudents.length > 0 && (
+              <p className="text-sm text-muted-foreground font-cairo">
+                عدد الطلاب المتاحين: {filteredStudents.length}
+              </p>
+            )}
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
@@ -186,7 +281,7 @@ const NotesManagement = () => {
               <Button 
                 onClick={addNote}
                 className="enhanced-button hover-lift font-cairo w-full"
-                disabled={!selectedStudent || !newNote.trim() || students.length === 0}
+                disabled={!selectedStudent || !newNote.trim() || loading}
               >
                 <Save className="h-5 w-5 ml-2" />
                 إضافة الملاحظة
