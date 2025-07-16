@@ -143,20 +143,14 @@ const NotesManagement = () => {
               <Label htmlFor="student" className="font-cairo text-foreground">الطالب</Label>
               <Select value={selectedStudent} onValueChange={setSelectedStudent}>
                 <SelectTrigger className="enhanced-input">
-                  <SelectValue placeholder="اختر الطالب" />
+                  <SelectValue placeholder={students.length === 0 ? "لا يوجد طلاب - أضف الطلاب أولاً" : "اختر الطالب"} />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
-                  {students.length === 0 ? (
-                    <SelectItem value="" disabled className="font-cairo text-muted-foreground">
-                      لا يوجد طلاب - أضف الطلاب أولاً
+                  {students.map((student) => (
+                    <SelectItem key={student} value={student} className="font-cairo">
+                      {student}
                     </SelectItem>
-                  ) : (
-                    students.map((student) => (
-                      <SelectItem key={student} value={student} className="font-cairo">
-                        {student}
-                      </SelectItem>
-                    ))
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -192,7 +186,7 @@ const NotesManagement = () => {
               <Button 
                 onClick={addNote}
                 className="enhanced-button hover-lift font-cairo w-full"
-                disabled={!selectedStudent || !newNote.trim()}
+                disabled={!selectedStudent || !newNote.trim() || students.length === 0}
               >
                 <Save className="h-5 w-5 ml-2" />
                 إضافة الملاحظة
