@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,8 +29,8 @@ interface Student {
 }
 
 const NotesManagement = () => {
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedSection, setSelectedSection] = useState("");
+  const [selectedGrade, setSelectedGrade] = useState("all");
+  const [selectedSection, setSelectedSection] = useState("all");
   const [selectedStudent, setSelectedStudent] = useState("");
   const [newNote, setNewNote] = useState("");
   const [noteType, setNoteType] = useState<'positive' | 'negative' | 'neutral'>('neutral');
@@ -71,8 +72,8 @@ const NotesManagement = () => {
 
   // تصفية الطلاب حسب الصف والشعبة والبحث
   const filteredStudents = students.filter(student => {
-    const matchesGrade = !selectedGrade || student.grade === selectedGrade;
-    const matchesSection = !selectedSection || student.class_section === selectedSection;
+    const matchesGrade = selectedGrade === "all" || student.grade === selectedGrade;
+    const matchesSection = selectedSection === "all" || student.class_section === selectedSection;
     const matchesSearch = !searchTerm || 
       student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.student_number.toLowerCase().includes(searchTerm.toLowerCase());
@@ -172,7 +173,7 @@ const NotesManagement = () => {
                   <SelectValue placeholder="اختر الصف" />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
-                  <SelectItem value="" className="font-cairo">جميع الصفوف</SelectItem>
+                  <SelectItem value="all" className="font-cairo">جميع الصفوف</SelectItem>
                   {grades.map((grade) => (
                     <SelectItem key={grade} value={grade} className="font-cairo">
                       {grade}
@@ -189,7 +190,7 @@ const NotesManagement = () => {
                   <SelectValue placeholder="اختر الشعبة" />
                 </SelectTrigger>
                 <SelectContent className="glass-effect">
-                  <SelectItem value="" className="font-cairo">جميع الشعب</SelectItem>
+                  <SelectItem value="all" className="font-cairo">جميع الشعب</SelectItem>
                   {sections.map((section) => (
                     <SelectItem key={section} value={section} className="font-cairo">
                       الشعبة {section}
@@ -232,7 +233,7 @@ const NotesManagement = () => {
               <SelectTrigger className="enhanced-input">
                 <SelectValue placeholder={
                   loading ? "جاري تحميل الطلاب..." :
-                  filteredStudents.length === 0 ? "لا يوجد طلاب - تأكد من إضافة الطلاب أولاً" : 
+                  filteredStudents.length === 0 ? "لا يوجد طلاب - تأكد من إضافة الطلاب أولاً" :
                   "اختر الطالب"
                 } />
               </SelectTrigger>
