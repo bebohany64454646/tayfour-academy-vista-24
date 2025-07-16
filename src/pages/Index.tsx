@@ -59,7 +59,22 @@ const Index = () => {
             const user = await getUserByRememberToken(studentToken);
             if (user && user.type === 'student') {
               console.log('تم تسجيل دخول الطالب تلقائياً');
-              setCurrentStudentData(user);
+              // Convert database Row to StudentData
+              const studentData: StudentData = {
+                id: user.id as number,
+                username: user.username as string,
+                full_name: user.full_name as string,
+                student_number: user.student_number as string,
+                grade: user.grade as string,
+                class_section: user.class_section as string,
+                phone: user.phone as string,
+                parent_phone: user.parent_phone as string,
+                email: user.email as string,
+                address: user.address as string,
+                birth_date: user.birth_date as string,
+                enrollment_date: user.enrollment_date as string,
+              };
+              setCurrentStudentData(studentData);
               setAccountType('student');
               setCurrentState('student-dashboard');
               setHasInitialized(true);
