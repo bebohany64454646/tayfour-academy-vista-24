@@ -20,27 +20,28 @@ import {
   GraduationCap
 } from "lucide-react";
 
-interface StudentDashboardProps {
-  onLogout: () => void;
+interface StudentData {
+  id?: number;
+  username: string;
+  full_name: string;
+  student_number?: string;
+  grade?: string;
+  class_section?: string;
+  phone?: string;
+  parent_phone?: string;
+  email?: string;
+  address?: string;
+  birth_date?: string;
+  enrollment_date?: string;
 }
 
-const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
-  const [activeSection, setActiveSection] = useState('overview');
+interface StudentDashboardProps {
+  onLogout: () => void;
+  studentData: StudentData;
+}
 
-  // بيانات الطالب التجريبية - في التطبيق الحقيقي ستأتي من قاعدة البيانات
-  const studentData = {
-    username: 'ahmed.mohammed',
-    full_name: 'أحمد محمد علي',
-    student_number: '2024001',
-    grade: 'تاسع',
-    class_section: 'شعبة 3',
-    phone: '0987654321',
-    parent_phone: '0912345678',
-    email: 'ahmed.mohammed@school.edu',
-    address: 'دمشق - المزة',
-    birth_date: '2008-05-15',
-    enrollment_date: '2022-09-01'
-  };
+const StudentDashboard = ({ onLogout, studentData }: StudentDashboardProps) => {
+  const [activeSection, setActiveSection] = useState('overview');
 
   const menuItems = [
     { id: 'overview', label: 'نظرة عامة', icon: BarChart3 },
@@ -238,29 +239,37 @@ const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <GraduationCap className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">رقم الطالب</p>
-                          <p className="font-medium font-cairo">{studentData.student_number}</p>
+                      {studentData.student_number && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <GraduationCap className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">رقم الطالب</p>
+                            <p className="font-medium font-cairo">{studentData.student_number}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <BookOpen className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">الصف والشعبة</p>
-                          <p className="font-medium font-cairo">{studentData.grade} - {studentData.class_section}</p>
+                      {(studentData.grade || studentData.class_section) && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <BookOpen className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">الصف والشعبة</p>
+                            <p className="font-medium font-cairo">
+                              {studentData.grade} {studentData.class_section && `- ${studentData.class_section}`}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <CalendarIcon className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">تاريخ الميلاد</p>
-                          <p className="font-medium font-cairo">{studentData.birth_date}</p>
+                      {studentData.birth_date && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <CalendarIcon className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">تاريخ الميلاد</p>
+                            <p className="font-medium font-cairo">{studentData.birth_date}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -275,37 +284,45 @@ const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid gap-4">
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <Phone className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">هاتف الطالب</p>
-                          <p className="font-medium font-cairo">{studentData.phone}</p>
+                      {studentData.phone && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <Phone className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">هاتف الطالب</p>
+                            <p className="font-medium font-cairo">{studentData.phone}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <Phone className="h-5 w-5 text-green-600" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">هاتف ولي الأمر</p>
-                          <p className="font-medium font-cairo">{studentData.parent_phone}</p>
+                      {studentData.parent_phone && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <Phone className="h-5 w-5 text-green-600" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">هاتف ولي الأمر</p>
+                            <p className="font-medium font-cairo">{studentData.parent_phone}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <Mail className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">البريد الإلكتروني</p>
-                          <p className="font-medium font-cairo">{studentData.email}</p>
+                      {studentData.email && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <Mail className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">البريد الإلكتروني</p>
+                            <p className="font-medium font-cairo">{studentData.email}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <MapPin className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">العنوان</p>
-                          <p className="font-medium font-cairo">{studentData.address}</p>
+                      {studentData.address && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <MapPin className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">العنوان</p>
+                            <p className="font-medium font-cairo">{studentData.address}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -328,13 +345,15 @@ const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
-                        <CalendarIcon className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-sm text-muted-foreground font-cairo">تاريخ التسجيل</p>
-                          <p className="font-medium font-cairo">{studentData.enrollment_date}</p>
+                      {studentData.enrollment_date && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                          <CalendarIcon className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="text-sm text-muted-foreground font-cairo">تاريخ التسجيل</p>
+                            <p className="font-medium font-cairo">{studentData.enrollment_date}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
