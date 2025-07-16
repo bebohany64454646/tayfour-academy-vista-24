@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -174,25 +173,14 @@ const StudentsManagement = () => {
               </DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="username" className="font-cairo">اسم المستخدم</Label>
-                  <Input
-                    id="username"
-                    value={newStudent.username}
-                    onChange={(e) => setNewStudent({...newStudent, username: e.target.value})}
-                    className="font-cairo"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="studentNumber" className="font-cairo">رقم الطالب</Label>
-                  <Input
-                    id="studentNumber"
-                    value={newStudent.studentNumber}
-                    onChange={(e) => setNewStudent({...newStudent, studentNumber: e.target.value})}
-                    className="font-cairo"
-                  />
-                </div>
+              <div>
+                <Label htmlFor="username" className="font-cairo">اسم المستخدم</Label>
+                <Input
+                  id="username"
+                  value={newStudent.username}
+                  onChange={(e) => setNewStudent({...newStudent, username: e.target.value})}
+                  className="font-cairo"
+                />
               </div>
               <div>
                 <Label htmlFor="fullName" className="font-cairo">الاسم الكامل</Label>
