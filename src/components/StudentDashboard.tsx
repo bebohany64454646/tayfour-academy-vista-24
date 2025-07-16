@@ -12,7 +12,12 @@ import {
   CheckCircle, 
   User,
   LogOut,
-  Download
+  Download,
+  Phone,
+  Mail,
+  MapPin,
+  Calendar as CalendarIcon,
+  GraduationCap
 } from "lucide-react";
 
 interface StudentDashboardProps {
@@ -21,6 +26,21 @@ interface StudentDashboardProps {
 
 const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
   const [activeSection, setActiveSection] = useState('overview');
+
+  // بيانات الطالب التجريبية - في التطبيق الحقيقي ستأتي من قاعدة البيانات
+  const studentData = {
+    username: 'ahmed.mohammed',
+    full_name: 'أحمد محمد علي',
+    student_number: '2024001',
+    grade: 'تاسع',
+    class_section: 'شعبة 3',
+    phone: '0987654321',
+    parent_phone: '0912345678',
+    email: 'ahmed.mohammed@school.edu',
+    address: 'دمشق - المزة',
+    birth_date: '2008-05-15',
+    enrollment_date: '2022-09-01'
+  };
 
   const menuItems = [
     { id: 'overview', label: 'نظرة عامة', icon: BarChart3 },
@@ -62,7 +82,7 @@ const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
               <h1 className="text-2xl font-bold text-foreground font-cairo">
                 لوحة تحكم الطالب
               </h1>
-              <p className="text-muted-foreground font-cairo">مرحباً أحمد محمد</p>
+              <p className="text-muted-foreground font-cairo">مرحباً {studentData.full_name}</p>
             </div>
           </div>
           <Button 
@@ -191,6 +211,133 @@ const StudentDashboard = ({ onLogout }: StudentDashboardProps) => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {activeSection === 'profile' && (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-foreground font-cairo">الملف الشخصي</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-6">
+                {/* معلومات أساسية */}
+                <Card className="glass-effect border-border">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3 font-cairo">
+                      <User className="h-6 w-6 text-primary" />
+                      المعلومات الأساسية
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4">
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <User className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">الاسم الكامل</p>
+                          <p className="font-medium font-cairo">{studentData.full_name}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <GraduationCap className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">رقم الطالب</p>
+                          <p className="font-medium font-cairo">{studentData.student_number}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">الصف والشعبة</p>
+                          <p className="font-medium font-cairo">{studentData.grade} - {studentData.class_section}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <CalendarIcon className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">تاريخ الميلاد</p>
+                          <p className="font-medium font-cairo">{studentData.birth_date}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* معلومات الاتصال */}
+                <Card className="glass-effect border-border">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3 font-cairo">
+                      <Phone className="h-6 w-6 text-primary" />
+                      معلومات الاتصال
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4">
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <Phone className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">هاتف الطالب</p>
+                          <p className="font-medium font-cairo">{studentData.phone}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <Phone className="h-5 w-5 text-green-600" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">هاتف ولي الأمر</p>
+                          <p className="font-medium font-cairo">{studentData.parent_phone}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <Mail className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">البريد الإلكتروني</p>
+                          <p className="font-medium font-cairo">{studentData.email}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">العنوان</p>
+                          <p className="font-medium font-cairo">{studentData.address}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* معلومات أكاديمية */}
+                <Card className="glass-effect border-border lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3 font-cairo">
+                      <BookOpen className="h-6 w-6 text-primary" />
+                      المعلومات الأكاديمية
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <User className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">اسم المستخدم</p>
+                          <p className="font-medium font-cairo">{studentData.username}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30">
+                        <CalendarIcon className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm text-muted-foreground font-cairo">تاريخ التسجيل</p>
+                          <p className="font-medium font-cairo">{studentData.enrollment_date}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           )}
