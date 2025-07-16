@@ -1,24 +1,20 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Facebook } from "lucide-react";
-
 interface WelcomeScreenProps {
   onComplete: () => void;
 }
-
-const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
+const WelcomeScreen = ({
+  onComplete
+}: WelcomeScreenProps) => {
   const [showContent, setShowContent] = useState(false);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContent(true);
     }, 500);
     return () => clearTimeout(timer);
   }, []);
-
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center">
+  return <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center">
       {/* Enhanced Floating Neon Dots */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="neon-dot neon-dot-1"></div>
@@ -49,14 +45,9 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         <div className="mb-8 enhanced-pulse-glow inline-block">
           <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-primary/30 shadow-2xl hover:shadow-primary/20 transition-all duration-300">
             <div className="w-24 h-24 mx-auto flex items-center justify-center">
-              <img 
-                src="/lovable-uploads/8860d291-d798-4f21-ab51-5a3d278c150e.png" 
-                alt="شعار مدرسة محمود طيفور الإعدادية" 
-                className="w-full h-full object-contain rounded-lg"
-                style={{
-                  filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.3))'
-                }}
-              />
+              <img src="/lovable-uploads/8860d291-d798-4f21-ab51-5a3d278c150e.png" alt="شعار مدرسة محمود طيفور الإعدادية" className="w-full h-full object-contain rounded-lg" style={{
+              filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.3))'
+            }} />
             </div>
             {/* Decorative corners */}
             <div className="absolute top-1 left-1 w-3 h-3 border-t-2 border-l-2 border-primary/50 rounded-tl-lg"></div>
@@ -79,26 +70,16 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
         {/* KodCraft Message with Facebook Button */}
         <div className="mb-12 flex items-center justify-center gap-4 flex-wrap">
-          <p className="text-lg font-cairo text-muted-foreground">
-            مع تحيات KodCraft
-          </p>
-          <a 
-            href="https://www.facebook.com/share/g/1CJerKaLkj/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl pulse-glow"
-          >
+          <p className="text-lg font-cairo text-muted-foreground">مع تحيات مدرسة محمود طيفور 
+تم تصميم الموقع وبنائه بواسطة kodcraft</p>
+          <a href="https://www.facebook.com/share/g/1CJerKaLkj/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl pulse-glow">
             <Facebook className="h-5 w-5" />
             <span className="font-cairo">فيسبوك</span>
           </a>
         </div>
 
         {/* Enhanced Action Button */}
-        <Button 
-          onClick={onComplete}
-          size="lg" 
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-cairo font-semibold text-xl px-12 py-8 rounded-full shadow-2xl hover:shadow-primary/30 transition-all duration-300 enhanced-pulse-glow hover:scale-105"
-        >
+        <Button onClick={onComplete} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-cairo font-semibold text-xl px-12 py-8 rounded-full shadow-2xl hover:shadow-primary/30 transition-all duration-300 enhanced-pulse-glow hover:scale-105">
           🚀 ادخل إلى المنصة
           <ArrowLeft className="mr-3 h-6 w-6" />
         </Button>
@@ -116,8 +97,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default WelcomeScreen;
