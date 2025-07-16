@@ -40,9 +40,9 @@ const BehavioralNotesManagement = () => {
   });
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedSection, setSelectedSection] = useState("");
-  const [filterType, setFilterType] = useState("");
+  const [selectedGrade, setSelectedGrade] = useState("all");
+  const [selectedSection, setSelectedSection] = useState("all");
+  const [filterType, setFilterType] = useState("all");
 
   const grades = ["سابع", "ثامن", "تاسع"];
   const sections = ["1", "2", "3", "4", "5", "6", "7"];
@@ -71,11 +71,11 @@ const BehavioralNotesManagement = () => {
   useEffect(() => {
     let filtered = students;
     
-    if (selectedGrade) {
+    if (selectedGrade !== "all") {
       filtered = filtered.filter(student => student.grade === selectedGrade);
     }
     
-    if (selectedSection) {
+    if (selectedSection !== "all") {
       filtered = filtered.filter(student => student.section === selectedSection);
     }
     
@@ -126,15 +126,15 @@ const BehavioralNotesManagement = () => {
   const getFilteredNotes = () => {
     let filtered = notes;
     
-    if (filterType) {
+    if (filterType !== "all") {
       filtered = filtered.filter(note => note.noteType === filterType);
     }
     
-    if (selectedGrade) {
+    if (selectedGrade !== "all") {
       filtered = filtered.filter(note => note.grade === selectedGrade);
     }
     
-    if (selectedSection) {
+    if (selectedSection !== "all") {
       filtered = filtered.filter(note => note.section === selectedSection);
     }
     
@@ -205,7 +205,7 @@ const BehavioralNotesManagement = () => {
                   <SelectValue placeholder="اختر الصف" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">جميع الصفوف</SelectItem>
+                  <SelectItem value="all" className="font-cairo">جميع الصفوف</SelectItem>
                   {grades.map((grade) => (
                     <SelectItem key={grade} value={grade} className="font-cairo">
                       {grade}
@@ -222,7 +222,7 @@ const BehavioralNotesManagement = () => {
                   <SelectValue placeholder="اختر الشعبة" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">جميع الشعب</SelectItem>
+                  <SelectItem value="all" className="font-cairo">جميع الشعب</SelectItem>
                   {sections.map((section) => (
                     <SelectItem key={section} value={section} className="font-cairo">
                       الشعبة {section}
@@ -287,7 +287,7 @@ const BehavioralNotesManagement = () => {
                   <SelectValue placeholder="جميع الأنواع" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">جميع الأنواع</SelectItem>
+                  <SelectItem value="all" className="font-cairo">جميع الأنواع</SelectItem>
                   {noteTypes.map((type) => (
                     <SelectItem key={type} value={type} className="font-cairo">
                       {type}
